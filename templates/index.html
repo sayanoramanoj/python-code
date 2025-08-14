@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>LinkLite - URL Shortener</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <!-- Logo & Name -->
+    <div class="logo">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+            <path d="M10 14l-1.5 1.5a3 3 0 0 1-4.2 0l-1.8-1.8a3 3 0 0 1 0-4.2l3-3a3 3 0 0 1 4.2 0L11 8" stroke="#4CAF50" stroke-width="2" stroke-linecap="round"/>
+            <path d="M14 10l1.5-1.5a3 3 0 0 1 4.2 0l1.8 1.8a3 3 0 0 1 0 4.2l-3 3a3 3 0 0 1-4.2 0L13 16" stroke="#4CAF50" stroke-width="2" stroke-linecap="round"/>
+            <path d="M12 6l.5 2.5L15 9l-2.5 1.5L12 13l-.5-2.5L9 9l2.5-.5L12 6z" fill="#FFC107"/>
+        </svg>
+        <h1>LinkLite</h1>
+    </div>
+
+    <h2>Shorten Your Links Instantly</h2>
+    <form id="shortenForm">
+        <input type="url" id="longUrl" placeholder="Enter your long URL here" required>
+        <br>
+        <button type="submit">Shorten URL</button>
+    </form>
+    <div class="result" id="result"></div>
+
+    <!-- Visit Anytime Message -->
+    <p class="footer-message">💡 Come back anytime to shorten more links!</p>
+</div>
+
+<script>
+    document.getElementById('shortenForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const longUrl = document.getElementById('longUrl').value;
+        const response = await fetch('/shorten', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: longUrl })
+        });
+
+        const data = await response.json();
+        if (data.short_url) {
+            document.getElementById('result').innerHTML =
+                `<span style="color:green; font-weight:bold;">✅ Success!</span> 
+                 Your short URL is: <a href="${data.short_url}" target="_blank">${data.short_url}</a>`;
+        } else {
+            document.getElementById('result').innerHTML =
+                `<span style="color:red; font-weight:bold;">❌ Error:</span> Could not shorten URL`;
+        }
+    });
+</script>
+</body>
+</html>
